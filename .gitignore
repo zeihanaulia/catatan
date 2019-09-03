@@ -2,3 +2,5 @@
 .vs/slnx.sqlite
 .vs/VSWorkspaceState.json
 .vs/catatan/v15/.suo
+**/.mypy_cache/*
+**/bin/*
