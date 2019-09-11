@@ -22,7 +22,7 @@ Tidak ada definisi resmi sih, tapi kalau mengambil pendapat dari [Martin Fowler]
 
 Lalu apa hubunganya, menelaah karakteristik yang pertama, dimana setiap service akan terpisah dari service lainnya sehingga ini akan menambah banyak masalah. Seperti latency, identifikasi dimana service yang mati dimana, dan lain lain. Ya gak masalah kalau servicenya cuma sedikit dalam hitungan jari, bisa langsung ketemu masalahnya dimana, bagaimana kalau seperti gambar ini.
 
-![alt text](/images/visual-uber-microservice.jpg "Gambar dari buku mastering distributed tracing")
+![alt text](/Distributed%20Tracing/images/visual-uber-microservice.jpg "Gambar dari buku mastering distributed tracing")
 
 Gambar diatas adalah gambar dari Jaeger UI DAG(Directed Acyclic Graph). Yang merepresntasikan microservice yang ada di uber, besar dari lingkaran / node itu merepresentasikan service yang paling banyak digunakan atau semua bergantung pada service itu.
 
