@@ -20,7 +20,7 @@ Tidak ada definisi resmi sih, tapi kalau mengambil pendapat dari [Martin Fowler]
 8. Design for failure
 9. Evolutionary Design
 
-Lalu apa hubunganya, menelaah karakteristik yang pertama, dimana setiap service akan terpisah dari service lainnya sehingga ini akan menambah banyak masalah. Seperti latency, identifikasi dimana service yang mati dimana, dan lain lain. Ya gak masalah kalau servicenya cuma sedikit dalam hitungan jari, bisa langsung ketemu masalahnya dimana, bagaimana kalau seperti gambar ini.
+Lalu apa hubunganya, menelaah karakteristik yang pertama, dimana setiap service akan terpisah dari service lainnya sehingga ini akan menambah banyak masalah, makannya dikarakteristik pendapat martin fowler di point delapan, beliau menambahkan Design For Failure. Seperti latency, identifikasi dimana service yang mati dimana, dan lain lain. Ya gak masalah kalau servicenya cuma sedikit dalam hitungan jari, bisa langsung ketemu masalahnya dimana, bagaimana kalau seperti gambar ini.
 
 ![alt text](/Distributed%20Tracing/images/visual-uber-microservice.jpg "Gambar dari buku mastering distributed tracing")
 
@@ -49,6 +49,20 @@ Semua itu tidak dapat terhandle hanya dengan mengandalkan traditional monitoring
 
 Mungkin kalian bertanya, Yang dimaksud dengan traditional monitoring itu apa?
 
+Teridiri dari metrics dan logs.
+
+Metrics itu contoh ceritanya gini.
+
+"Pada suatu hari... Sesuatu yang buruk terjadi. Selesai"
+
+![alt text](/Distributed%20Tracing/images/metrics.jpg "Gambar dari buku mastering distributed tracing, metrics")
+
+Metrics atau statistik adalah angka yang digunakan untuk mengukur, yang dicatat dari aplikasi, misalnya kita mau hitung users active (Counters), Gauge atau alat ukur kaya temperatur, dan timer.
+
+Logging ini adalah yang dasar dari observability. Sebenernya kita sudah mengenal logs mulai dari melakukan `print`. tapi logs ini sulit kalo udah ketemu microservice karena log stream hanya mengatakan ke kita tentang single instance dari service. Tapi seiring perkembangan dunia paradigma programing yang mengubah logging  menjadi debuging tools. bisa dilihat di perkenalan Dapper oleh Ben Sigelman. Ini Videonya [Keynote: OpenTracing and Containers: Depth, Breadth, and the Future of Tracing - Ben Sigelman](https://www.youtube.com/watch?v=n8mUiLIXkto)
+
+Disana ben mention tentang distributed tracing yang nanti akan kita bahas
+
 Intinya adalah monitoring hanya dapat menghandle per instance atau per service saja. tidak menghiraukan konteks dari requestnya. Semisal ketika PPOB system berjalan, mungkin akan ada beberapa service yang dilewati, misalnya, inquiry data ppob, menambah poin untuk user, mendebet balance di ovo sementara. membeli ke ppob provider lain. jika gagal mengembalikan balance yang sudah didebet. Jika berhasil mencatat kembali jika transaksi berhasil. Traditional monitoring hanya mencatat per service saja, tidak ada konteks apakah proses menambah poin untuk user karena transaksi PPOB atau transaksi dari Purchase Order.
 
 Maka dari itu kita perlu memiliki sistem yang dapat diteliti / Observability.
@@ -71,9 +85,7 @@ Monitoring adalah aktifitas yang mengamati suatu sistem setiap waktu. Dan otomat
 
 Disana juga disebut tentang 3 pillar dari observability, yaitu Logs, metrics dan traces. Akan tetapi tidak lama disanggah oleh Ben Sigelman dalam artikelnya [three pillars zero answers towards new scorecard observability](https://lightstep.com/blog/three-pillars-zero-answers-towards-new-scorecard-observability/).
 
-Keresahannya ada di ketiga pilar tersebut, pertama tentang metrics, Metrics dapat sangat membantu ketika tags yang digunakan tidak terlalu banyak.
-
-TODO: apa itu tags, show demo
+Keresahannya ada di ketiga pilar tersebut, pertama tentang metrics, Metrics dapat sangat membantu ketika tags yang digunakan tidak terlalu banyak. Karena jika terlalu banyak ini akan mengakibatkan terlalu banyak dan kalo mau hitung hitungan apakah setimpal dengan bisnis yang dijalankan?
 
 Lalu Logs, keresahan di logs dari pendapat Ben adalah Mahal. Hitungan seperti ini
 
@@ -106,6 +118,9 @@ The human is the foundation of observability!"
 
 -- Brian Cantrill
 
+Cek videonya disini [Visualizing Distributed Systems with Statemaps - Bryan Cantrill, Joyent](https://www.youtube.com/watch?v=U4E0QxzswQc&feature=youtu.be)
+
+
 ## Observability adalah tantangan dalam microservice
 
 Apa alasan atau apa yang diharapkan oleh perusahaan atau organisasi untuk mengimplementasikan Microservice?
@@ -120,14 +135,33 @@ Menurut pendapat Vijay Gill, Senior VP of Engineering at Databricks dari artikel
 
 Menurut data tentang tantangan microservice di 2018
 
-• Expect challenges and changes on the microservices journey:
+![alt text](/Distributed%20Tracing/images/global-microservices-trends-2018.png "Screenshot dari artikel global microservices trends 2018")    
 
-   - 99% report challenges with using microservices
-   - 56% say each additional microservice increases operational challenges
-   - 73% find troubleshooting is harder in a microservices environment
-   - 98% of those that face issues identifying the root cause of issues in microservices environments report it has a
-   direct business impact
-   - 87% of those in production report microservices generate more application data
+## Distributed Tracing
+
+Kalau kita ingin memonitor komponen dalam satu instance, tradisional monitoring sih gak diragukan lagi. Tapi kalau komponen tersebut merequest ke komponen lain itu cerita lain. tradisional monitoring tidak tau menau soal komponen lain melakukanan apa, dan kita tidak tau cerita kenapa komponen tersebut berjalan. Untuk menyelesaikan masalah ini kita harus dapat melihat secara garis besar yang dapat kita zoom untuk mendapat detailnya.
+
+Intinya kita butuh penglihatan dari macro hingga ke micro
+
+Distributed Trecing mengambil view dari Request-Centrict artinya menamngkap detail dari esekusi componen di microservice. 
+
+Dasartnya ada 3 secara singkat:
+
+- Infrastruktur tracing melampirkan contextual metadata ke setiap request dan memastikan metadata diteruskan setiap request. Bahakan ketika request tersebut bekomuikasi dengan jaringan lain.
+- Pada bagian trace poin, instrument mencatat event yang di anotasikan dengan informasi yang relevan seperti url, http request sql statement dari database query.
+- Event yang direkam akan ditandai dengan metadata kontekstual dan referensi sebab akibat eksplisit untuk persitiwa sebelumnya.
+
+Terdengan bagus dan mudah ya? 
+
+Langsung saja kita coba dari demo HotRoad
+
+## HotRoad Tracing
+
+### Tags vs Span
+
+Tags biasanay digunakan untuk semua span, saat logs representasikan beberapa event yang terjadi selama span execution.
+Jadi setiap span memiliki beberapa tags
+
 
 Referensi Tambahan:
 
