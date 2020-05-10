@@ -18,10 +18,10 @@ Keymap:
 
 Keymap berdasarkan kebiasaan di VSCode, Jika tidak bisa disamakan paling tidak tau gantinya apa.
 
-- [ ] SHIFT + up / down                    : untuk memblok beberapa baris
+- [ ] Key map: OPT + CMD + up and down     : untuk membuat kursor ke beberapa baris => CMD + V + C
 - [ ] Key map: SHIFT + CMD  + left / right : untuk memblok baris kode
+- [ ] SHIFT + up / down                    : untuk memblok beberapa baris
 - [ ] Key map: OPT + up / down             : untuk memindahkan baris kode ke atas atau bawah  
-- [ ] Key map: OPT + CMD + up and down     : untuk membuat kursor ke beberapa baris 
 - [ ] Key map: CMD + P                     : untuk memilih file
 - [ ] Key map: CMD + W                     : untuk menghapus tab
 
